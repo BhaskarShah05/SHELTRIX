@@ -303,26 +303,76 @@ graph LR
 
 ---
 
-## 8. Local Development & Deployment
+---
+
+## 8. Repository Structure & Separation
+
+The repository is structured with modular separation between the **Frontend Client Application** and the **Backend Microservice Solver**:
+
+```
+SHELTRIX/
+├── backend/                        # BACKEND SERVICE LAYER (Node.js / Express)
+│   ├── src/
+│   │   └── server.js               # Physics ODE solver, NASA, Open-Meteo & MQTT endpoints
+│   ├── .env.example                # Backend environment configuration
+│   ├── package.json                # Express, CORS, and backend dependencies
+│   └── README.md                   # Backend microservice documentation & API catalog
+│
+├── src/                            # FRONTEND CLIENT APPLICATION (React 18 + Three.js)
+│   ├── components/
+│   │   ├── ShelterViewer3D.jsx     # Three.js 3D spatial studio & solar ray dial
+│   │   └── ThermalCharts.jsx       # Chart.js 24h thermal profiles & energy breakdown
+│   ├── apiIntegrations.js          # Client-side API orchestration & fallback benchmarks
+│   ├── simulationEngine.js         # Client-side lumped capacitance physics simulation
+│   ├── App.jsx                     # Master application container & crystal navigation dock
+│   ├── main.jsx                    # React 18 DOM root mount
+│   └── index.css                   # 2026 Crystal Glassmorphism design system & SF Pro fonts
+│
+├── public/                         # STATIC MEDIA ASSETS
+│   └── assets/
+│       ├── sheltrix-logo.png       # Official SHELTRIX logo
+│       ├── ladakh-lake-bg.jpg      # 2K high-dynamic-range Himalayan backdrop
+│       └── launch-intro.mp4        # 4K Fullscreen launch video animation
+│
+├── index.html                      # HTML5 semantic entry point & metadata
+├── package.json                    # Frontend dependencies (React, Vite, Three.js, Chart.js)
+├── vite.config.js                  # Vite production build pipeline configuration
+└── README.md                       # Master engineering documentation
+```
+
+---
+
+## 9. Local Development & Deployment
 
 ### Quick Setup
+
+#### 1. Running Frontend
 ```bash
-# 1. Clone the repository
+# Clone the repository
 git clone https://github.com/BhaskarShah05/SHELTRIX.git
 cd SHELTRIX
 
-# 2. Install dependencies
+# Install frontend dependencies
 npm install
 
-# 3. Launch local Vite development server
+# Launch local Vite development server
 npm run dev
 ```
 Open `http://localhost:5173` in your browser.
+
+#### 2. Running Backend Microservice
+```bash
+cd backend
+npm install
+npm run dev
+```
+Backend API service will listen on `http://localhost:5001`.
 
 ### Production Build
 ```bash
 # Compile and minify for production
 npm run build
+```
 
 # Preview production build locally
 npm run preview

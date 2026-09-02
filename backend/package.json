@@ -1,0 +1,27 @@
+{
+  "name": "sheltrix-backend",
+  "version": "1.0.0",
+  "description": "SHELTRIX 2026 Climate Digital Twin & High-Altitude Thermal Solver API Service",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  },
+  "keywords": [
+    "sheltrix",
+    "digital-twin",
+    "thermal-simulation",
+    "biopcm",
+    "open-meteo",
+    "nasa-power",
+    "climate-resilience"
+  ],
+  "author": "Bhaskar Shah",
+  "license": "MIT"
+}
