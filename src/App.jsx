@@ -242,14 +242,18 @@ export default function App() {
       {/* TRUE FULLSCREEN WEBSITE LAUNCH INTRO ANIMATION */}
       {showLaunchIntro && (
         <div className={`launch-intro-overlay ${isIntroFading ? 'fading-out' : ''}`}>
-          <video
-            src="/assets/launch-intro.mp4"
-            autoPlay
-            muted
-            playsInline
-            onEnded={handleDismissIntro}
-            className="launch-intro-video"
-          />
+          <div className="launch-intro-stage">
+            <video
+              src="/assets/launch-intro.mp4"
+              autoPlay
+              muted
+              playsInline
+              onEnded={handleDismissIntro}
+              className="launch-intro-video"
+            />
+            {/* Seamless gradient mask over tagline zone */}
+            <div className="launch-intro-tagline-mask" />
+          </div>
           <button
             onClick={handleDismissIntro}
             className="launch-skip-btn"

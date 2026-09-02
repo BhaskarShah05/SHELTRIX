@@ -718,11 +718,37 @@ body {
   pointer-events: none;
 }
 
+.launch-intro-stage {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
 .launch-intro-video {
   width: 100vw;
   height: 100vh;
   object-fit: cover;
   display: block;
+}
+
+/* Seamlessly masks the 'SMART SHELTERS, OPTIMIZED FOR CLIMATE' tagline line during video playback */
+.launch-intro-tagline-mask {
+  position: absolute;
+  bottom: calc(50% - 240px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 780px;
+  max-width: 90vw;
+  height: 70px;
+  background: radial-gradient(ellipse at center, rgba(32, 120, 175, 0.98) 0%, rgba(32, 120, 175, 0.95) 60%, rgba(32, 120, 175, 0) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  pointer-events: none;
+  z-index: 10;
 }
 
 .launch-skip-btn {
