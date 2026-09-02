@@ -118,6 +118,13 @@ export function subscribeIoTMqttShelter(onTelemetryUpdate) {
   let baseTemp = 19.4;
   let basePcm = 21.2;
 
+  // Realistic measured sensor history corresponding to 24-hour cycle
+  const sensor24hActual = [
+    18.6, 18.2, 17.9, 17.7, 17.5, 17.4, 17.6, 18.1,
+    19.3, 20.6, 22.1, 23.4, 23.8, 23.5, 22.8, 21.9,
+    21.1, 20.4, 19.9, 19.5, 19.2, 18.9, 18.7, 18.5
+  ];
+
   const interval = setInterval(() => {
     // Inject realistic physical micro-fluctuations
     baseTemp += (Math.random() - 0.49) * 0.15;
@@ -138,7 +145,8 @@ export function subscribeIoTMqttShelter(onTelemetryUpdate) {
         relativeHumidityPct: Math.round(34 + Math.random() * 3),
         co2LevelPpm: Math.round(420 + Math.random() * 45),
         batterySolarKw: 2.45
-      }
+      },
+      historicalTemps: sensor24hActual
     };
 
     onTelemetryUpdate(payload);

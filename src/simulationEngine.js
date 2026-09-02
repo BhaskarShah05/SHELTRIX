@@ -259,24 +259,47 @@ export function calculateAssemblyU(layers, materialsDb = INITIAL_MATERIALS) {
 
 /**
  * Calculates shelter geometry areas and volume
+ * Supports: Rectangular, Geodesic Dome, and Quonset / Curved Vault
  */
 export function calculateGeometry(shelter) {
   const L = shelter.length;
   const W = shelter.width;
   const H = shelter.height;
+  const shape = shelter.shape || 'rectangular';
 
-  const floorArea = L * W;
+  let floorArea = L * W;
   let roofArea = L * W;
-  if (shelter.roofType === 'pitched') {
-    const rad = (shelter.roofAngle * Math.PI) / 180;
-    roofArea = (L * W) / Math.cos(rad);
+  let grossWallArea = 2 * (L * H) + 2 * (W * H);
+  let volume = L * W * H;
+
+  if (shape === 'dome') {
+    // Hemisphere / Dome approximation with radius R = sqrt(L*W / pi)
+    const radius = Math.sqrt((L * W) / Math.PI);
+    floorArea = Math.PI * radius * radius;
+    // Dome surface area: 2 * pi * r * h
+    roofArea = 2 * Math.PI * radius * H * 0.6;
+    grossWallArea = 2 * Math.PI * radius * H * 0.4;
+    volume = (2 / 3) * Math.PI * Math.pow(radius, 2) * H;
+  } else if (shape === 'quonset') {
+    // Semi-cylindrical arch vault
+    const radius = W / 2;
+    floorArea = L * W;
+    roofArea = Math.PI * radius * L; // Curved arch surface
+    grossWallArea = 2 * (Math.PI * Math.pow(radius, 2) / 2); // 2 semi-circular end walls
+    volume = (Math.PI * Math.pow(radius, 2) / 2) * L;
+  } else {
+    // Rectangular
+    if (shelter.roofType === 'pitched') {
+      const rad = (shelter.roofAngle * Math.PI) / 180;
+      roofArea = (L * W) / Math.cos(rad);
+    }
   }
 
-  const grossWallArea = 2 * (L * H) + 2 * (W * H);
   const netWallArea = Math.max(0, grossWallArea - shelter.windowArea - shelter.doorArea);
-  const volume = L * W * H;
+  const totalEnvelopeArea = grossWallArea + roofArea + floorArea;
+  const openingPercentage = parseFloat(((shelter.windowArea / Math.max(1, grossWallArea)) * 100).toFixed(1));
 
-  return { floorArea, roofArea, grossWallArea, netWallArea, volume };
+  return { floorArea, roofArea, grossWallArea, netWallArea, volume, totalEnvelopeArea, openingPercentage };
 }
 
 /**
@@ -405,19 +428,35 @@ export function runThermalSimulation(shelter, climateData = LADAKH_WINTER_DEFAUL
   const tMin = Math.min(...temps);
   const tMax = Math.max(...temps);
   const tAvg = temps.reduce((a, b) => a + b, 0) / temps.length;
+  const totalLoss = cumulativeEnvelopeLossKwh + cumulativeOpeningLossKwh + cumulativeVentLossKwh;
+  const timeOutsideTarget = 24 - comfortHours;
+  // Incident solar on unobstructed horizontal surface vs useful capture through aperture
+  const solarIncidentKwh = parseFloat(((climateData.reduce((acc, c) => acc + c.solar, 0) * geom.floorArea * 3600) / 3600000).toFixed(1));
+  const solarUsefulKwh = parseFloat(cumulativeSolarGainKwh.toFixed(1));
+
+  // Multi-criteria Composite Design Score (0 - 100) combining comfort, solar harvest, and low energy penalty
+  const comfortScore = (comfortHours / 24) * 45;
+  const solarScore = Math.min(30, (solarUsefulKwh / Math.max(1, totalLoss)) * 30);
+  const deficitPenalty = Math.min(25, (supplementalHeatingKwh / 20) * 25);
+  const designScore = parseFloat(Math.max(10, Math.min(100, comfortScore + solarScore - deficitPenalty + 25)).toFixed(1));
 
   return {
     tMin: parseFloat(tMin.toFixed(1)),
     tMax: parseFloat(tMax.toFixed(1)),
     tAvg: parseFloat(tAvg.toFixed(1)),
     comfortHours,
+    timeOutsideTarget,
     comfortRatio: parseFloat((comfortHours / 24).toFixed(2)),
-    solarGainKwh: parseFloat(cumulativeSolarGainKwh.toFixed(1)),
+    solarGainKwh: solarUsefulKwh,
+    solarUsefulKwh,
+    solarIncidentKwh,
+    solarHarvestEfficiency: parseFloat(((solarUsefulKwh / Math.max(1, solarIncidentKwh)) * 100).toFixed(1)),
     envelopeLossKwh: parseFloat(cumulativeEnvelopeLossKwh.toFixed(1)),
     openingLossKwh: parseFloat(cumulativeOpeningLossKwh.toFixed(1)),
     ventLossKwh: parseFloat(cumulativeVentLossKwh.toFixed(1)),
-    totalLossKwh: parseFloat((cumulativeEnvelopeLossKwh + cumulativeOpeningLossKwh + cumulativeVentLossKwh).toFixed(1)),
+    totalLossKwh: parseFloat(totalLoss.toFixed(1)),
     supplementalHeatingKwh: parseFloat(supplementalHeatingKwh.toFixed(1)),
+    designScore,
     uValues: {
       wall: parseFloat(U_wall.toFixed(2)),
       roof: parseFloat(U_roof.toFixed(2)),
