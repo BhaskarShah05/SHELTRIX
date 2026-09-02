@@ -718,56 +718,11 @@ body {
   pointer-events: none;
 }
 
-.launch-intro-stage {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
 .launch-intro-video {
   width: 100vw;
   height: 100vh;
   object-fit: cover;
   display: block;
-}
-
-/* Seamless typography patch fixing 'CLINATE' typo in video to 'CLIMATE.' */
-.launch-intro-climate-patch {
-  position: absolute;
-  bottom: calc(50% - 248px);
-  left: calc(50% + 118px);
-  background: #2578ab;
-  padding: 2px 6px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  z-index: 20;
-  box-shadow: 0 0 16px rgba(37, 120, 171, 0.95);
-  animation: climatePatchFade 0.4s ease forwards;
-}
-
-.launch-intro-climate-text {
-  font-family: var(--font-sf-display);
-  font-size: 1.15rem;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  color: #06193b;
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.2);
-}
-
-@keyframes climatePatchFade {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
 }
 
 .launch-skip-btn {

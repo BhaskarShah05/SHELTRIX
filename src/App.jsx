@@ -242,20 +242,14 @@ export default function App() {
       {/* TRUE FULLSCREEN WEBSITE LAUNCH INTRO ANIMATION */}
       {showLaunchIntro && (
         <div className={`launch-intro-overlay ${isIntroFading ? 'fading-out' : ''}`}>
-          <div className="launch-intro-stage">
-            <video
-              src="/assets/launch-intro.mp4"
-              autoPlay
-              muted
-              playsInline
-              onEnded={handleDismissIntro}
-              className="launch-intro-video"
-            />
-            {/* Seamless typo correction patch: covers CLINATE and crisply renders CLIMATE. */}
-            <div className="launch-intro-climate-patch">
-              <span className="launch-intro-climate-text">CLIMATE.</span>
-            </div>
-          </div>
+          <video
+            src="/assets/launch-intro.mp4"
+            autoPlay
+            muted
+            playsInline
+            onEnded={handleDismissIntro}
+            className="launch-intro-video"
+          />
           <button
             onClick={handleDismissIntro}
             className="launch-skip-btn"
